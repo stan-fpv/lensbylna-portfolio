@@ -1,0 +1,80 @@
+:root {
+  --bg: #faf8f4;
+  --bg-alt: #f3efe7;
+  --ink: #1c1915;
+  --ink-soft: #5c554a;
+  --gold: #a58a55;
+  --gold-deep: #8a7143;
+  --line: #e6dfd2;
+  --white: #ffffff;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Outfit', system-ui, sans-serif;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+
+.container {
+  width: min(1200px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+h1, h2, h3 { font-family: var(--serif); font-weight: 500; line-height: 1.12; }
+
+.eyebrow {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 34px;
+  border: 1px solid var(--ink);
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: background 250ms var(--ease-out), color 250ms var(--ease-out), border-color 250ms var(--ease-out), transform 160ms var(--ease-out);
+}
+.btn:active { transform: scale(0.97); }
+.btn.ghost { background: transparent; color: var(--ink); }
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover { background: var(--gold); border-color: var(--gold); color: var(--white); }
+  .btn.ghost:hover { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { transform: none; transition: opacity 300ms ease; }
+  html { scroll-behavior: auto; }
+}
