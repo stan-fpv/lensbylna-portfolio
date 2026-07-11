@@ -1,0 +1,62 @@
+.logo {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+}
+.logo img {
+  display: block;
+  height: 100%;
+  width: auto;
+}
+
+/* Reveal + shine on load / into view */
+.logo-animate img {
+  clip-path: inset(0 100% 0 0);
+  opacity: 0;
+  animation: logoReveal 1100ms var(--ease-out) forwards;
+}
+@keyframes logoReveal {
+  0% { clip-path: inset(0 100% 0 0); opacity: 0; }
+  15% { opacity: 1; }
+  100% { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+
+.logo-shine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 55%;
+  background: linear-gradient(105deg, transparent 0%, rgba(165, 138, 85, 0.55) 50%, transparent 100%);
+  transform: translateX(-160%) skewX(-16deg);
+  animation: logoShine 1100ms 1000ms var(--ease-out) forwards;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+@keyframes logoShine {
+  to { transform: translateX(320%) skewX(-16deg); }
+}
+
+/* Reveal on scroll into view (parent .reveal gains .in) */
+.logo-onview img {
+  clip-path: inset(0 100% 0 0);
+  opacity: 0;
+}
+.logo-onview .logo-shine {
+  opacity: 0;
+  transform: translateX(-160%) skewX(-16deg);
+  animation: none;
+}
+.reveal.in .logo-onview img {
+  animation: logoReveal 1200ms var(--ease-out) forwards;
+}
+.reveal.in .logo-onview .logo-shine {
+  opacity: 1;
+  animation: logoShine 1200ms 1050ms var(--ease-out) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-animate img,
+  .logo-onview img { animation: none; clip-path: none; opacity: 1; }
+  .logo-shine { display: none; }
+}

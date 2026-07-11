@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
+import Logo from './Logo';
 import { categories } from '../lib/photos';
+import './logo.css';
 import './footer.css';
 
 export default function Footer() {
@@ -7,9 +9,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer-grid">
         <div className="footer-brand">
-          <div className="footer-logo">
-            lens<span>by</span>lna
-          </div>
+          <Logo variant="white" className="footer-logo" />
           <p>
             Fotografia reportażowa i eventowa. Motoryzacja, koncerty, teatr
             i imprezy okolicznościowe — Radomsko i cała Polska.

@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Logo from './Logo';
+import './logo.css';
 import './navbar.css';
 
 const links = [
@@ -39,8 +41,8 @@ export default function Navbar() {
   return (
     <header className={`nav ${scrolled || open ? 'nav-solid' : ''}`}>
       <div className="container nav-inner">
-        <Link to="/" className="nav-logo" onClick={() => setOpen(false)}>
-          lens<span>by</span>lna
+        <Link to="/" className="nav-logo" onClick={() => setOpen(false)} aria-label="lens by lna — strona główna">
+          <Logo animate />
         </Link>
         <nav className={`nav-links ${open ? 'open' : ''}`}>
           {links.map((l, i) => (

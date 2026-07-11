@@ -13,16 +13,8 @@
 }
 
 .footer-logo {
-  font-family: var(--serif);
-  font-size: 30px;
-  font-weight: 600;
-  color: var(--bg);
-  margin-bottom: 16px;
-}
-.footer-logo span {
-  color: var(--gold);
-  font-style: italic;
-  font-weight: 400;
+  height: 62px;
+  margin-bottom: 20px;
 }
 .footer-brand p {
   font-size: 14px;

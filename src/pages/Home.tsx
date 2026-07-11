@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Reveal from '../components/Reveal';
-import { photos, categories, byCategory, thumb, full } from '../lib/photos';
+import Logo from '../components/Logo';
+import '../components/logo.css';
+import { photos, categories, byCategory, thumb, full, totalPhotos } from '../lib/photos';
 import './home.css';
 
 const pick = (name: string) => photos.find(p => p.name.includes(name)) ?? photos[0];
@@ -21,66 +23,19 @@ const marqueePhotos = [
   pick('okolicznosciowe-18-agi'),
 ];
 
-const packages = [
+const pricingOverview = [
   {
-    name: 'Pakiet Mini',
-    price: '500 zł',
-    note: 'Dla mało wymagających.',
-    featured: false,
-    items: [
-      'Do 3 godzin reportażu',
-      'Zdjęcia z gośćmi, tortu oraz najważniejszych momentów',
-      'Minimum 80 obrobionych zdjęć',
-      'Galeria online do pobrania',
-      'Czas realizacji do 30 dni',
-    ],
+    kind: 'Pakiety imprezowe',
+    from: 'od 500 zł',
+    desc: 'Gotowe pakiety reportażu na osiemnastki, urodziny i jubileusze — Mini, Standard i Premium.',
+    cats: ['osiemnastki', 'okolicznosciowe'],
   },
   {
-    name: 'Pakiet Standard',
-    price: '800 zł',
-    note: 'Najczęściej wybierany.',
-    featured: true,
-    items: [
-      'Do 6 godzin reportażu',
-      'Zdjęcia grupowe i portretowe solenizanta, przebieg imprezy',
-      'Minimum 200 obrobionych zdjęć',
-      'Galeria do pobrania',
-      'Krótka rolka',
-      '10 zdjęć oddanych w ciągu 48 h jako zajawka',
-      'Czas realizacji do 30 dni',
-    ],
+    kind: 'Sesje indywidualne',
+    from: 'od 50 zł',
+    desc: 'Elastyczna wycena pod konkretną sesję — motoryzacja, koncerty, teatr i wydarzenia.',
+    cats: ['motoryzacja', 'reportaze'],
   },
-  {
-    name: 'Pakiet Premium',
-    price: '1200 zł',
-    note: 'Dla wymagających.',
-    featured: false,
-    items: [
-      'Do 8 godzin reportażu',
-      'Minimum 300 obrobionych zdjęć',
-      'Galeria online do pobrania',
-      '20 zdjęć oddanych w ciągu 48 h jako zajawka',
-      'Teledysk',
-      'Czas realizacji do 30 dni',
-    ],
-  },
-];
-
-const extras = [
-  ['Dodatkowa opłata powyżej 50 km od Radomska', '1 zł/km'],
-  ['Dodatkowa godzina reportażu', '100 zł'],
-  ['Krótka rolka typu reels', '100 zł'],
-  ['Teledysk z imprezy', '300 zł'],
-];
-
-const individualItems = [
-  'Od 30 minut reportażu',
-  'Kilka lokalizacji',
-  'Pomoc w pozowaniu i ustawieniu pojazdu',
-  'Galeria do pobrania',
-  'Zdjęcia statyczne — z zewnątrz i wewnątrz',
-  'Czas realizacji do 14 dni',
-  'Możliwość realizacji priorytetowej',
 ];
 
 export default function Home() {
@@ -173,7 +128,7 @@ export default function Home() {
         <div className="container about-grid">
           <Reveal>
             <p className="eyebrow">O mnie</p>
-            <h2>Cześć, tu <em>lensbylna</em></h2>
+            <h2>Cześć, tu <em>lens by lna</em></h2>
           </Reveal>
           <Reveal delay={120}>
             <p className="about-text">
@@ -183,9 +138,9 @@ export default function Home() {
               ją w kadrze tak, jak wyglądała naprawdę.
             </p>
             <div className="about-stats">
-              <div><strong>{photos.length}+</strong><span>zdjęć w portfolio</span></div>
+              <div><strong>{totalPhotos}+</strong><span>zdjęć w portfolio</span></div>
               <div><strong>17</strong><span>zrealizowanych wydarzeń</span></div>
-              <div><strong>3</strong><span>specjalizacje</span></div>
+              <div><strong>4</strong><span>specjalizacje</span></div>
             </div>
           </Reveal>
         </div>
@@ -197,22 +152,26 @@ export default function Home() {
           <Reveal className="section-head">
             <p className="eyebrow">Portfolio</p>
             <h2>Wybierz <em>kategorię</em></h2>
+            <p className="section-lead">
+              Cztery specjalizacje, każda z osobną galerią i dopasowanym cennikiem.
+            </p>
           </Reveal>
           <div className="cat-grid">
             {categories.map((cat, i) => {
               const items = byCategory(cat.slug);
               const cover = items[Math.min(2, items.length - 1)];
               return (
-                <Reveal key={cat.slug} delay={i * 120}>
+                <Reveal key={cat.slug} delay={(i % 2) * 120}>
                   <Link to={`/galeria/${cat.slug}`} className="cat-card">
                     <div className="cat-img">
                       <img src={full(cover)} alt={cat.title} loading="lazy" />
+                      <span className="cat-price">{cat.priceHint}</span>
                     </div>
                     <div className="cat-body">
                       <h3>{cat.title}</h3>
                       <p>{cat.tagline}</p>
                       <span className="cat-link">
-                        Zobacz galerię <i>({items.length} zdjęć)</i> →
+                        Galeria i cennik <i>({items.length} zdjęć)</i> →
                       </span>
                     </div>
                   </Link>
@@ -223,73 +182,41 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ---------- CENNIK 18 ---------- */}
-      <section className="pricing" id="cennik">
+      {/* ---------- CENNIK (overview) ---------- */}
+      <section className="cennik" id="cennik">
         <div className="container">
           <Reveal className="section-head">
-            <p className="eyebrow">Cennik osiemnastkowy 2026</p>
-            <h2>Jaki rodzaj reportażu <em>Cię interesuje?</em></h2>
+            <p className="eyebrow">Cennik</p>
+            <h2>Dwa sposoby <em>współpracy</em></h2>
+            <p className="section-lead">
+              Pełny cennik wraz z galerią znajdziesz w każdej kategorii. Oto szybki przegląd.
+            </p>
           </Reveal>
-          <div className="price-grid">
-            {packages.map((pkg, i) => (
-              <Reveal key={pkg.name} delay={i * 120}>
-                <div className={`price-card ${pkg.featured ? 'featured' : ''}`}>
-                  {pkg.featured && <div className="price-badge">Najczęściej wybierany</div>}
-                  <p className="price-note">{pkg.note}</p>
-                  <h3>{pkg.name}</h3>
-                  <div className="price-amount">{pkg.price}</div>
-                  <ul>
-                    {pkg.items.map(it => <li key={it}>{it}</li>)}
-                  </ul>
-                  <a className="btn ghost" href="#kontakt">Zarezerwuj termin</a>
+          <div className="cennik-grid">
+            {pricingOverview.map((o, i) => (
+              <Reveal key={o.kind} delay={i * 120}>
+                <div className="cennik-card">
+                  <p className="cennik-from">{o.from}</p>
+                  <h3>{o.kind}</h3>
+                  <p className="cennik-desc">{o.desc}</p>
+                  <div className="cennik-links">
+                    {o.cats.map(slug => {
+                      const c = categories.find(cc => cc.slug === slug)!;
+                      return (
+                        <Link key={slug} to={`/galeria/${slug}`} className="cennik-pill">
+                          {c.short} →
+                        </Link>
+                      );
+                    })}
+                  </div>
                 </div>
               </Reveal>
             ))}
           </div>
-          <Reveal>
-            <div className="price-extras">
-              <h4>Opłaty dodatkowe</h4>
-              <ul>
-                {extras.map(([label, price]) => (
-                  <li key={label}>
-                    <span>{label}</span>
-                    <i />
-                    <strong>{price}</strong>
-                  </li>
-                ))}
-              </ul>
-              <p className="price-fine">* Rezerwacja terminu następuje po wpłacie zadatku w wysokości 100 zł.</p>
-            </div>
-          </Reveal>
         </div>
       </section>
 
-      {/* ---------- CENNIK INDYWIDUALNY ---------- */}
-      <section className="individual">
-        <div className="container indiv-grid">
-          <Reveal>
-            <p className="eyebrow">Cennik indywidualny 2026</p>
-            <h2>Elastyczna oferta <em>reportażu</em></h2>
-            <p className="indiv-text">
-              Z powodu różnych czynników wpływających na sesje, reportaż indywidualny
-              wyceniany jest po ustaleniu szczegółów jego wykonania z fotografem.
-            </p>
-            <div className="indiv-price">od <strong>50 zł</strong></div>
-          </Reveal>
-          <Reveal delay={140}>
-            <h4 className="indiv-listhead">W ramach sesji</h4>
-            <ul className="indiv-list">
-              {individualItems.map(it => <li key={it}>{it}</li>)}
-            </ul>
-            <p className="price-fine">
-              Dodatkowa opłata powyżej 50 km od Radomska — 1 zł/km.<br />
-              * Rezerwacja terminu następuje po wpłacie zadatku w wysokości 50 zł.
-            </p>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ---------- KONTAKT ---------- */}
+      {/* ---------- CONTACT ---------- */}
       <section className="contact" id="kontakt">
         <div className="container contact-inner">
           <Reveal>
@@ -307,6 +234,16 @@ export default function Home() {
                 Facebook
               </a>
             </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ---------- LOGO OUTRO ---------- */}
+      <section className="logo-outro">
+        <div className="container">
+          <Reveal className="logo-outro-inner">
+            <Logo onView className="logo-outro-mark" />
+            <p>Fotografia, która zostaje na dłużej.</p>
           </Reveal>
         </div>
       </section>
