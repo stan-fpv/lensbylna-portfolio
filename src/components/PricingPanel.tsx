@@ -9,6 +9,7 @@ import {
 import './pricing-panel.css';
 
 export default function PricingPanel({ kind }: { kind: PricingKind }) {
+  if (kind === 'none') return null;
   if (kind === 'individual') return <IndividualPanel />;
   return <PackagesPanel />;
 }

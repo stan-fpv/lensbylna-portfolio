@@ -92,7 +92,7 @@ export const individual = {
   fine: '* Rezerwacja terminu następuje po wpłacie zadatku w wysokości 50 zł. Wycena ustalana indywidualnie z fotografem.',
 };
 
-export type PricingKind = 'packages' | 'individual';
+export type PricingKind = 'packages' | 'individual' | 'none';
 
 /* ---------- Categories ---------- */
 
@@ -137,8 +137,8 @@ export const categories: CategoryMeta[] = [
     title: 'Reportaże',
     short: 'Reportaże',
     tagline: 'Koncerty, teatr i wydarzenia — autentyczne chwile uchwycone w naturalnym świetle.',
-    priceHint: 'Sesje od 50 zł',
-    pricing: 'individual',
+    priceHint: 'Koncerty · teatr · eventy',
+    pricing: 'none',
     groups: [
       { match: 'koncerty', label: 'Koncerty' },
       { match: 'teatr', label: 'Teatr' },
@@ -151,8 +151,8 @@ export const categories: CategoryMeta[] = [
     title: 'Imprezy okolicznościowe',
     short: 'Okolicznościowe',
     tagline: 'Urodziny, jubileusze i rodzinne uroczystości — wspomnienia, do których się wraca.',
-    priceHint: 'Pakiety od 500 zł',
-    pricing: 'packages',
+    priceHint: 'Urodziny · jubileusze',
+    pricing: 'none',
     groups: [{ match: '40', label: 'Urodziny i jubileusze' }],
   },
 ];

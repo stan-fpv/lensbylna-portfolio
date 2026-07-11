@@ -3,39 +3,60 @@ import { motion } from 'framer-motion';
 import Reveal from '../components/Reveal';
 import Logo from '../components/Logo';
 import '../components/logo.css';
-import { photos, categories, byCategory, thumb, full, totalPhotos } from '../lib/photos';
+import lena from '../assets/lena.png';
+import { photos, categories, thumb, full, type Photo } from '../lib/photos';
 import './home.css';
 
-const pick = (name: string) => photos.find(p => p.name.includes(name)) ?? photos[0];
+const byName = Object.fromEntries(photos.map(p => [p.name, p]));
+const P = (name: string): Photo => byName[name] ?? photos[0];
 
-const heroMain = pick('reportaze-koncerty-dzem');
-const heroSide = pick('motoryzacja-drift-osaka-17');
-const heroSmall = pick('okolicznosciowe-40-plus');
+const hero = ['motoryzacja-drift-osaka-26.jpg', 'reportaze-koncerty-dzem-10.jpg', 'okolicznosciowe-szymona-18-18.jpg'].map(P);
 
-const marqueePhotos = [
-  pick('motoryzacja-drift-osaka-22'),
-  pick('reportaze-koncerty-zespol-piersi'),
-  pick('okolicznosciowe-szymona-18'),
-  pick('motoryzacja-indy-squad'),
-  pick('reportaze-teatr'),
-  pick('motoryzacja-zloty-osaka'),
-  pick('reportaze-koncerty-wiktor'),
-  pick('okolicznosciowe-18-agi'),
+const marquee = [
+  'motoryzacja-drift-osaka-59.jpg',
+  'reportaze-koncerty-dzem-16.jpg',
+  'okolicznosciowe-szymona-18-19.jpg',
+  'motoryzacja-indy-squad-radomsko-indywidualne-143.jpg',
+  'reportaze-teatr-118.jpg',
+  'motoryzacja-zloty-osaka-202-osaka-indywidualen-2-2.jpg',
+  'okolicznosciowe-18-agi-18.jpg',
+  'reportaze-koncerty-zespol-piersi-10.jpg',
+].map(P);
+
+const cardCover: Record<string, string> = {
+  osiemnastki: 'okolicznosciowe-18-agi-15.jpg',
+  motoryzacja: 'motoryzacja-zloty-osaka-202-osaka-indywidualen-19.jpg',
+  reportaze: 'reportaze-teatr-116.jpg',
+  okolicznosciowe: 'okolicznosciowe-40-plus-1.jpg',
+};
+
+const features = [
+  {
+    title: 'Personalizacja',
+    desc: 'Każda sesja jest inna — kadr, światło i klimat dopasowuję do Ciebie oraz charakteru wydarzenia.',
+    photo: 'reportaze-teatr-115.jpg',
+  },
+  {
+    title: 'Detal',
+    desc: 'Zwracam uwagę na szczegóły, które budują historię — od faktury lakieru po emocje na twarzy.',
+    photo: 'motoryzacja-indy-squad-radomsko-indywidualne-117.jpg',
+  },
+  {
+    title: 'Autentyczność',
+    desc: 'Bez sztucznych pozów i ustawiania na siłę. Łapię chwile takimi, jakie są naprawdę.',
+    photo: 'reportaze-koncerty-wiktor-dydula-10.jpg',
+  },
+  {
+    title: 'Wyzwania',
+    desc: 'Trudne światło, ruch, dym na torze — im większe wyzwanie, tym ciekawszy kadr.',
+    photo: 'motoryzacja-drift-osaka-54.jpg',
+  },
 ];
 
-const pricingOverview = [
-  {
-    kind: 'Pakiety imprezowe',
-    from: 'od 500 zł',
-    desc: 'Gotowe pakiety reportażu na osiemnastki, urodziny i jubileusze — Mini, Standard i Premium.',
-    cats: ['osiemnastki', 'okolicznosciowe'],
-  },
-  {
-    kind: 'Sesje indywidualne',
-    from: 'od 50 zł',
-    desc: 'Elastyczna wycena pod konkretną sesję — motoryzacja, koncerty, teatr i wydarzenia.',
-    cats: ['motoryzacja', 'reportaze'],
-  },
+const stats = [
+  ['2100+', 'Wykonanych zdjęć'],
+  ['20+', 'Zrealizowanych sesji'],
+  ['6+', 'Zlotów samochodowych'],
 ];
 
 export default function Home() {
@@ -85,31 +106,19 @@ export default function Home() {
               <a className="btn ghost" href="#kontakt">Skontaktuj się</a>
             </motion.div>
           </div>
-          <div className="hero-visual">
-            <motion.div
-              className="hero-img hero-img-main"
-              initial={{ opacity: 0, scale: 1.06 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, ease: [0.23, 1, 0.32, 1], delay: 0.25 }}
-            >
-              <img src={full(heroMain)} alt="Koncert — fotografia reportażowa" fetchPriority="high" />
-            </motion.div>
-            <motion.div
-              className="hero-img hero-img-side"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: [0.23, 1, 0.32, 1], delay: 0.55 }}
-            >
-              <img src={thumb(heroSide)} alt="Drift — fotografia motoryzacyjna" />
-            </motion.div>
-            <motion.div
-              className="hero-img hero-img-small"
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: [0.23, 1, 0.32, 1], delay: 0.75 }}
-            >
-              <img src={thumb(heroSmall)} alt="Impreza okolicznościowa" />
-            </motion.div>
+
+          <div className="hero-gallery">
+            {hero.map((p, i) => (
+              <motion.figure
+                key={p.name}
+                className={`hero-frame hero-frame-${i + 1}`}
+                initial={{ opacity: 0, y: 46 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, ease: [0.23, 1, 0.32, 1], delay: 0.3 + i * 0.16 }}
+              >
+                <img src={full(p)} alt="" fetchPriority={i === 0 ? 'high' : 'auto'} />
+              </motion.figure>
+            ))}
           </div>
         </div>
       </section>
@@ -117,7 +126,7 @@ export default function Home() {
       {/* ---------- MARQUEE ---------- */}
       <section className="marquee" aria-hidden="true">
         <div className="marquee-track">
-          {[...marqueePhotos, ...marqueePhotos].map((p, i) => (
+          {[...marquee, ...marquee].map((p, i) => (
             <img key={i} src={thumb(p)} alt="" loading="lazy" />
           ))}
         </div>
@@ -125,24 +134,90 @@ export default function Home() {
 
       {/* ---------- O MNIE ---------- */}
       <section className="about" id="o-mnie">
-        <div className="container about-grid">
-          <Reveal>
-            <p className="eyebrow">O mnie</p>
-            <h2>Cześć, tu <em>lens by lna</em></h2>
+        <div className="container">
+          <div className="about-grid">
+            <Reveal className="about-photo">
+              <img src={lena} alt="Lena Kropisz — fotografka" loading="lazy" />
+              <span className="about-photo-badge">@lensbylna</span>
+            </Reveal>
+            <Reveal className="about-copy" delay={100}>
+              <p className="eyebrow">O mnie</p>
+              <h2>Hejka, jestem <em>Lena!</em></h2>
+              <p className="about-lead">
+                Nazywam się <strong>Lena Kropisz</strong> i mam 17 lat. Pochodzę z Radomska i pasjonuję
+                się mediami, szczególnie fotografią. Skupiam się na rozwijaniu swoich umiejętności oraz
+                budowaniu własnego stylu wizualnego. To dla mnie sposób pokazywania świata z mojej
+                perspektywy. Zajmuję się fotografią okolicznościową jak i motoryzacyjną. Montuję również
+                krótkie rolki z wydarzeń.
+              </p>
+              <p className="about-aside-q">A prywatnie?</p>
+              <p className="about-text">
+                Jestem uczennicą liceum ogólnokształcącego na kierunku matematyczno-fizycznym. Wiadomo,
+                <strong> duuużo focę</strong>. Wszędzie chodzę ze swoim aparatem, bo <strong>ZAWSZE</strong> znajdzie
+                się obraz warty uwiecznienia. Oprócz tego często maluję, rysuję i tworzę grafiki. Wieczorami
+                lubię położyć się pod kocykiem z herbatką i obejrzeć ulubiony serial 🙂. Uwielbiam gry
+                horrorowe i akcji.
+              </p>
+              <p className="about-text">
+                Fotografuję to, co dzieje się naprawdę — bez ustawiania na siłę, bez sztucznych kadrów. Od
+                zadymionych torów driftowych, przez światła sceny, po parkiet na osiemnastce. Pracuję
+                reportażowo: jestem tam, gdzie dzieje się emocja, i oddaję ją w kadrze tak, jak wyglądała
+                naprawdę.
+              </p>
+            </Reveal>
+          </div>
+
+          <Reveal className="about-stats">
+            {stats.map(([n, label]) => (
+              <div key={label}>
+                <strong>{n}</strong>
+                <span>{label}</span>
+              </div>
+            ))}
           </Reveal>
-          <Reveal delay={120}>
-            <p className="about-text">
-              Fotografuję to, co dzieje się naprawdę — bez ustawiania na siłę, bez sztucznych
-              kadrów. Od zadymionych torów driftowych, przez światła sceny, po parkiet na
-              osiemnastce. Pracuję reportażowo: jestem tam, gdzie dzieje się emocja, i oddaję
-              ją w kadrze tak, jak wyglądała naprawdę.
+        </div>
+      </section>
+
+      {/* ---------- QUOTE ---------- */}
+      <section className="quote">
+        <div className="container">
+          <Reveal className="quote-inner">
+            <span className="quote-mark">”</span>
+            <blockquote>
+              Do obiektywu trzeba podkraść się na palcach, nawet w przypadku martwej natury. Trzeba włożyć
+              aksamitne rękawiczki i być czujnym. Bez przepychania i tłoczenia się: wędkarz zawczasu nie
+              wzburza wody.
+            </blockquote>
+            <cite>— Henri Cartier-Bresson</cite>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ---------- STYL ---------- */}
+      <section className="style" id="styl">
+        <div className="container">
+          <Reveal className="section-head">
+            <p className="eyebrow">Styl</p>
+            <h2>Jak <em>fotografuję</em></h2>
+            <p className="section-lead">
+              Cztery rzeczy, na których zależy mi najbardziej — bez względu na to, czy to tor driftowy,
+              scena koncertowa czy parkiet na osiemnastce.
             </p>
-            <div className="about-stats">
-              <div><strong>{totalPhotos}+</strong><span>zdjęć w portfolio</span></div>
-              <div><strong>17</strong><span>zrealizowanych wydarzeń</span></div>
-              <div><strong>4</strong><span>specjalizacje</span></div>
-            </div>
           </Reveal>
+          <div className="style-grid">
+            {features.map((f, i) => (
+              <Reveal key={f.title} delay={(i % 4) * 90}>
+                <article className="style-card">
+                  <div className="style-img">
+                    <img src={full(P(f.photo))} alt={f.title} loading="lazy" />
+                    <span className="style-num">0{i + 1}</span>
+                  </div>
+                  <h3>{f.title}</h3>
+                  <p>{f.desc}</p>
+                </article>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -152,64 +227,22 @@ export default function Home() {
           <Reveal className="section-head">
             <p className="eyebrow">Portfolio</p>
             <h2>Wybierz <em>kategorię</em></h2>
-            <p className="section-lead">
-              Cztery specjalizacje, każda z osobną galerią i dopasowanym cennikiem.
-            </p>
+            <p className="section-lead">Cztery specjalizacje, każda z osobną galerią i podkategoriami.</p>
           </Reveal>
           <div className="cat-grid">
-            {categories.map((cat, i) => {
-              const items = byCategory(cat.slug);
-              const cover = items[Math.min(2, items.length - 1)];
-              return (
-                <Reveal key={cat.slug} delay={(i % 2) * 120}>
-                  <Link to={`/galeria/${cat.slug}`} className="cat-card">
-                    <div className="cat-img">
-                      <img src={full(cover)} alt={cat.title} loading="lazy" />
-                      <span className="cat-price">{cat.priceHint}</span>
-                    </div>
-                    <div className="cat-body">
-                      <h3>{cat.title}</h3>
-                      <p>{cat.tagline}</p>
-                      <span className="cat-link">
-                        Galeria i cennik <i>({items.length} zdjęć)</i> →
-                      </span>
-                    </div>
-                  </Link>
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ---------- CENNIK (overview) ---------- */}
-      <section className="cennik" id="cennik">
-        <div className="container">
-          <Reveal className="section-head">
-            <p className="eyebrow">Cennik</p>
-            <h2>Dwa sposoby <em>współpracy</em></h2>
-            <p className="section-lead">
-              Pełny cennik wraz z galerią znajdziesz w każdej kategorii. Oto szybki przegląd.
-            </p>
-          </Reveal>
-          <div className="cennik-grid">
-            {pricingOverview.map((o, i) => (
-              <Reveal key={o.kind} delay={i * 120}>
-                <div className="cennik-card">
-                  <p className="cennik-from">{o.from}</p>
-                  <h3>{o.kind}</h3>
-                  <p className="cennik-desc">{o.desc}</p>
-                  <div className="cennik-links">
-                    {o.cats.map(slug => {
-                      const c = categories.find(cc => cc.slug === slug)!;
-                      return (
-                        <Link key={slug} to={`/galeria/${slug}`} className="cennik-pill">
-                          {c.short} →
-                        </Link>
-                      );
-                    })}
+            {categories.map((cat, i) => (
+              <Reveal key={cat.slug} delay={(i % 2) * 120}>
+                <Link to={`/galeria/${cat.slug}`} className="cat-card">
+                  <div className="cat-img">
+                    <img src={full(P(cardCover[cat.slug]))} alt={cat.title} loading="lazy" />
+                    <span className="cat-price">{cat.priceHint}</span>
                   </div>
-                </div>
+                  <div className="cat-body">
+                    <h3>{cat.title}</h3>
+                    <p>{cat.tagline}</p>
+                    <span className="cat-link">Zobacz galerię →</span>
+                  </div>
+                </Link>
               </Reveal>
             ))}
           </div>
@@ -223,8 +256,8 @@ export default function Home() {
             <p className="eyebrow">Kontakt</p>
             <h2>Porozmawiajmy o <em>Twoim wydarzeniu</em></h2>
             <p className="contact-text">
-              Najszybciej złapiesz mnie na Instagramie — odpowiadam na bieżąco.
-              Napisz, co planujesz, a wspólnie ustalimy szczegóły.
+              Najszybciej złapiesz mnie na Instagramie — odpowiadam na bieżąco. Napisz, co planujesz,
+              a wspólnie ustalimy szczegóły.
             </p>
             <div className="contact-cta">
               <a className="btn" href="https://www.instagram.com/lensbylna" target="_blank" rel="noreferrer">
@@ -243,7 +276,7 @@ export default function Home() {
         <div className="container">
           <Reveal className="logo-outro-inner">
             <Logo onView className="logo-outro-mark" />
-            <p>Fotografia, która zostaje na dłużej.</p>
+            <p>Stwórzmy razem coś wyjątkowego!</p>
           </Reveal>
         </div>
       </section>
