@@ -1,27 +1,93 @@
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 import Reveal from '../components/Reveal';
 import Logo from '../components/Logo';
 import '../components/logo.css';
 import lena from '../assets/lena.png';
-import { photos, categories, thumb, full, type Photo } from '../lib/photos';
+import HeroCarousel from '../components/HeroCarousel';
+import { photos, categories, full, type Photo } from '../lib/photos';
 import './home.css';
 
 const byName = Object.fromEntries(photos.map(p => [p.name, p]));
 const P = (name: string): Photo => byName[name] ?? photos[0];
 
-const hero = ['motoryzacja-drift-osaka-26.jpg', 'reportaze-koncerty-dzem-10.jpg', 'okolicznosciowe-szymona-18-18.jpg'].map(P);
+const filmA = [
+  'motoryzacja-drift-osaka-26.jpg',
+  'reportaze-koncerty-dzem-29.jpg',
+  'okolicznosciowe-szymona-18-2.jpg',
+  'motoryzacja-zloty-osaka-202-osaka-indywidualen-24.jpg',
+].map(P);
+const filmB = [
+  'reportaze-teatr-60.jpg',
+  'motoryzacja-indy-squad-radomsko-indywidualne-4.jpg',
+  'okolicznosciowe-18-agi-25.jpg',
+  'reportaze-koncerty-dzem-49.jpg',
+].map(P);
+
+/** Hero: two endless vertical filmstrips scrolling in opposite directions,
+ *  the whole deck tilts in 3D toward the cursor with spring physics. */
+function HeroFilm() {
+  const ref = useRef<HTMLDivElement>(null);
+  const rotateX = useSpring(useMotionValue(0), { stiffness: 70, damping: 16 });
+  const rotateY = useSpring(useMotionValue(0), { stiffness: 70, damping: 16 });
+
+  const onMove = (e: React.MouseEvent) => {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    rotateY.set(px * 10);
+    rotateX.set(-py * 7);
+  };
+  const onLeave = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+  };
+
+  return (
+    <motion.div
+      className="hero-film-wrap"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1.1, ease: [0.23, 1, 0.32, 1], delay: 0.35 }}
+    >
+      <motion.div
+        ref={ref}
+        className="hero-film"
+        style={{ rotateX, rotateY }}
+        onMouseMove={onMove}
+        onMouseLeave={onLeave}
+      >
+        <div className="film-col film-col-a">
+          <div className="film-track">
+            {[...filmA, ...filmA].map((p, i) => (
+              <img key={i} src={full(p)} alt="" fetchPriority={i === 0 ? 'high' : 'auto'} draggable={false} />
+            ))}
+          </div>
+        </div>
+        <div className="film-col film-col-b">
+          <div className="film-track">
+            {[...filmB, ...filmB].map((p, i) => (
+              <img key={i} src={full(p)} alt="" draggable={false} />
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 const marquee = [
-  'motoryzacja-drift-osaka-59.jpg',
-  'reportaze-koncerty-dzem-16.jpg',
-  'okolicznosciowe-szymona-18-19.jpg',
-  'motoryzacja-indy-squad-radomsko-indywidualne-143.jpg',
-  'reportaze-teatr-118.jpg',
-  'motoryzacja-zloty-osaka-202-osaka-indywidualen-2-2.jpg',
-  'okolicznosciowe-18-agi-18.jpg',
-  'reportaze-koncerty-zespol-piersi-10.jpg',
-].map(P);
+  { photo: 'motoryzacja-drift-osaka-59.jpg', caption: 'Drift — Osaka' },
+  { photo: 'reportaze-koncerty-dzem-16.jpg', caption: 'Koncert — Dżem' },
+  { photo: 'okolicznosciowe-szymona-18-19.jpg', caption: 'Osiemnastka Szymona' },
+  { photo: 'motoryzacja-indy-squad-radomsko-indywidualne-143.jpg', caption: 'Sesja indywidualna' },
+  { photo: 'reportaze-teatr-118.jpg', caption: 'Teatr' },
+  { photo: 'motoryzacja-zloty-osaka-202-osaka-indywidualen-2-2.jpg', caption: 'Zlot — Osaka' },
+  { photo: 'okolicznosciowe-18-agi-18.jpg', caption: 'Osiemnastka Agnieszki' },
+  { photo: 'reportaze-koncerty-zespol-piersi-10.jpg', caption: 'Koncert — Zespół Piersi' },
+].map(s => ({ photo: P(s.photo), caption: s.caption }));
 
 const cardCover: Record<string, string> = {
   osiemnastki: 'okolicznosciowe-18-agi-15.jpg',
@@ -107,28 +173,14 @@ export default function Home() {
             </motion.div>
           </div>
 
-          <div className="hero-gallery">
-            {hero.map((p, i) => (
-              <motion.figure
-                key={p.name}
-                className={`hero-frame hero-frame-${i + 1}`}
-                initial={{ opacity: 0, y: 46 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: [0.23, 1, 0.32, 1], delay: 0.3 + i * 0.16 }}
-              >
-                <img src={full(p)} alt="" fetchPriority={i === 0 ? 'high' : 'auto'} />
-              </motion.figure>
-            ))}
-          </div>
+          <HeroFilm />
         </div>
       </section>
 
-      {/* ---------- MARQUEE ---------- */}
-      <section className="marquee" aria-hidden="true">
-        <div className="marquee-track">
-          {[...marquee, ...marquee].map((p, i) => (
-            <img key={i} src={thumb(p)} alt="" loading="lazy" />
-          ))}
+      {/* ---------- MARQUEE CAROUSEL ---------- */}
+      <section className="marquee-cx">
+        <div className="container">
+          <HeroCarousel slides={marquee} cardsPerView={4} />
         </div>
       </section>
 
